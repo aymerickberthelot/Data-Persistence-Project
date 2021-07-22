@@ -10,11 +10,14 @@ public class SaveDataHandler : MonoBehaviour
 {
     public static SaveDataHandler Instance;
     private InputField txt_Input;
-
-
     string nameInput;
+    private bool changeBestScore = false;
+    private bool changeHighestScore = false;
 
- 
+    public SaveData instanceSaveData;
+
+
+
 
     private void Awake()
     {
@@ -25,22 +28,54 @@ public class SaveDataHandler : MonoBehaviour
         }
 
         Instance = this;
+        this.instanceSaveData = new SaveData();
+
         DontDestroyOnLoad(gameObject);
 
     }
 
     [System.Serializable]
-    class SaveData
+    public class SaveData
     {
         public string nameInput;
+
+        public int currentScore = 0;
+        public int personalBestScore;
+
+        public int highestScore;
+
+        public bool CheckBestScore()
+        {
+            if (currentScore > personalBestScore)
+            {
+                personalBestScore = currentScore;
+                return true;
+            }
+
+            else return false;
+        }
+
+        public bool CheckHighestScore()
+        {
+            if (personalBestScore > highestScore)
+            {
+                highestScore = personalBestScore;
+                return true;
+            }
+
+            else return false;
+        }
+
+
     }
 
-    
+
     // Start is called before the first frame update
     void Start()
     {
 
         txt_Input = GameObject.Find("NameInput").GetComponent<InputField>();
+
     }
 
     // Update is called once per frame
@@ -60,20 +95,17 @@ public class SaveDataHandler : MonoBehaviour
         SaveData data = new SaveData();
         data.nameInput = nameInput;
 
-        if(string.IsNullOrEmpty(data.nameInput))
+        if (string.IsNullOrEmpty(data.nameInput))
             return 0;
-        
+
 
         string json = JsonUtility.ToJson(data);
-
-        //Debug.Log(json);
-
         File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
 
         return 1;
     }
 
-    public void LoadName()
+    public string LoadName()
     {
         string path = Application.persistentDataPath + "/savefile.json";
         if (File.Exists(path))
@@ -83,7 +115,57 @@ public class SaveDataHandler : MonoBehaviour
 
             nameInput = data.nameInput;
         }
+        else return "";
+
+        return nameInput;
     }
+
+    public int SaveUserInfo(int currentScore)
+    {
+        SaveData data = Instance.instanceSaveData;
+        data.nameInput = nameInput;
+        data.currentScore = currentScore;
+
+        changeBestScore = data.CheckBestScore();
+        changeHighestScore = data.CheckHighestScore();
+
+        if (string.IsNullOrEmpty(data.nameInput))
+            return 0;
+
+
+        if (changeBestScore || changeHighestScore)
+        {
+            string json = JsonUtility.ToJson(data);
+            Debug.Log(json);
+            File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+        }
+
+        data.currentScore = 0;
+        return 1;
+    }
+
+    public ArrayList LoadUserInfo()
+    {
+        ArrayList list = new ArrayList();
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            Debug.Log(json);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+
+            list.Add(data.nameInput);
+            list.Add(data.currentScore);
+            list.Add(data.personalBestScore);
+            list.Add(data.highestScore);
+            return list;
+        }
+
+
+        return list;
+    }
+
 
 
 }

@@ -76,6 +76,8 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        
+        SaveDataHandler.Instance.SaveUserInfo(m_Points);
         m_GameOver = true;
         GameOverText.SetActive(true);
     }

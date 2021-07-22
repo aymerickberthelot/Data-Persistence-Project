@@ -6,42 +6,19 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 
-public class UIMainHandler : MonoBehaviour
+public class UIMainHandler : UIHandler
 {
 
-    private Text nameText;
-    private string userName;
-    class SaveData
-    {
-        public string nameInput;
-  
-    }
+    
     // Start is called before the first frame update
     void Start()
     {
-        nameText =  GameObject.Find("NameText").GetComponent<Text>();
-         DisplayUserName();
+        bestScoreInfoText = GameObject.Find("BestScoreText").GetComponent<Text>();
+        GetAllInfo();
+        
+        DisplayBestScoreInfo(bestScoreInfoText, SaveDataHandler.Instance.instanceSaveData.personalBestScore);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-       
-    }
 
-    public void DisplayUserName()
-    {
-        string path = Application.persistentDataPath + "/savefile.json";
-        if (File.Exists(path))
-        {
-            string json = File.ReadAllText(path);
-            SaveData data = JsonUtility.FromJson<SaveData>(json);
-
-            userName = data.nameInput;
-            //Debug.Log(json);
-            nameText.text = "Name : "+userName;
-
-
-        }
-    }
+    
 }
