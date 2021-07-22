@@ -1,33 +1,29 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEditor;
-
-public class UiMenuHandler : MonoBehaviour
+public class UIMenuHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     public void StartGame()
     {
-        SceneManager.LoadScene(1);
+        if(SaveDataHandler.Instance.SaveName() != 0)
+           SceneManager.LoadScene(1);
     }
+
 
     public void QuitGame()
     {
-       EditorApplication.ExitPlaymode();
-
-        Application.Quit(); 
+        EditorApplication.ExitPlaymode();
+        Application.Quit();
     }
+
+
+    
+
+
+
 }
