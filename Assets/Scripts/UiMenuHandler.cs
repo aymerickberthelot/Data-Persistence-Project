@@ -8,18 +8,18 @@ using UnityEditor;
 public class UIMenuHandler : UIHandler
 {
 
-    private string userName;
+    private string userName_input;
     InputField inputField;
-   
+
     public void Start()
     {
-        
+
 
         inputField = GameObject.Find("NameInput").GetComponent<InputField>();
         bestScoreInfoText = GameObject.Find("BestScoreInfoText").GetComponent<Text>();
-        userName = SaveDataHandler.Instance.LoadName();
+        userName_input = SaveDataHandler.Instance.LoadName();
 
-        
+
 
         GetAllInfo();
         DisplayBestScoreInfo(bestScoreInfoText, highestScore);
@@ -47,8 +47,19 @@ public class UIMenuHandler : UIHandler
     public void DisplayUserNameOnInputField()
     {
         if (!string.IsNullOrEmpty(userName))
-            inputField.text = userName;
+            inputField.text = userName_input;
     }
+
+    public override void GetAllInfo()
+    {
+        data_InList = SaveDataHandler.Instance.LoadUserInfo();
+        userName = (string)data_InList[0];
+        currentScore = (int)data_InList[1];
+        personalBestScore = (int)data_InList[2];
+        highestScore = (int)data_InList[3];
+
+    }
+
 
 
 }

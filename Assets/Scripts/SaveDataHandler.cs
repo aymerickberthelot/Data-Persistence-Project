@@ -10,34 +10,32 @@ public class SaveDataHandler : MonoBehaviour
 {
     public static SaveDataHandler Instance;
     private InputField txt_Input;
-    string nameInput;
+    string userName;
     private bool changeBestScore = false;
     private bool changeHighestScore = false;
 
     public SaveData instanceSaveData;
+
+    public string name_file = "name.json";
+    public string data_file = "data.json";
 
 
 
 
     private void Awake()
     {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
 
-        Instance = this;
-        this.instanceSaveData = new SaveData();
-
+        SaveInstance();
         DontDestroyOnLoad(gameObject);
 
     }
 
+
+
     [System.Serializable]
-    public class SaveData
+    public class SaveData  //Data we want to save
     {
-        public string nameInput;
+        public string userName;
 
         public int currentScore = 0;
         public int personalBestScore;
@@ -66,7 +64,6 @@ public class SaveDataHandler : MonoBehaviour
             else return false;
         }
 
-
     }
 
 
@@ -84,7 +81,7 @@ public class SaveDataHandler : MonoBehaviour
 
         if (txt_Input != null)
         {
-            nameInput = txt_Input.text;
+            userName = txt_Input.text;
         }
     }
 
@@ -93,43 +90,43 @@ public class SaveDataHandler : MonoBehaviour
     public int SaveName()
     {
         SaveData data = new SaveData();
-        data.nameInput = nameInput;
+        data.userName = userName;
 
-        if (string.IsNullOrEmpty(data.nameInput))
+        if (string.IsNullOrEmpty(data.userName))
             return 0;
 
 
         string json = JsonUtility.ToJson(data);
-        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+        File.WriteAllText(Application.persistentDataPath + "/" + name_file, json);
 
         return 1;
     }
 
     public string LoadName()
     {
-        string path = Application.persistentDataPath + "/savefile.json";
+        string path = Application.persistentDataPath + "/" + name_file;
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
-            nameInput = data.nameInput;
+            userName = data.userName;
         }
         else return "";
 
-        return nameInput;
+        return userName;
     }
 
     public int SaveUserInfo(int currentScore)
     {
         SaveData data = Instance.instanceSaveData;
-        data.nameInput = nameInput;
+        data.userName = userName;
         data.currentScore = currentScore;
 
         changeBestScore = data.CheckBestScore();
         changeHighestScore = data.CheckHighestScore();
 
-        if (string.IsNullOrEmpty(data.nameInput))
+        if (string.IsNullOrEmpty(data.userName))
             return 0;
 
 
@@ -137,7 +134,7 @@ public class SaveDataHandler : MonoBehaviour
         {
             string json = JsonUtility.ToJson(data);
             Debug.Log(json);
-            File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+            File.WriteAllText(Application.persistentDataPath + "/" + data_file, json);
         }
 
         data.currentScore = 0;
@@ -147,7 +144,7 @@ public class SaveDataHandler : MonoBehaviour
     public ArrayList LoadUserInfo()
     {
         ArrayList list = new ArrayList();
-        string path = Application.persistentDataPath + "/savefile.json";
+        string path = Application.persistentDataPath + "/" + data_file;
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
@@ -155,7 +152,7 @@ public class SaveDataHandler : MonoBehaviour
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
 
-            list.Add(data.nameInput);
+            list.Add(data.userName);
             list.Add(data.currentScore);
             list.Add(data.personalBestScore);
             list.Add(data.highestScore);
@@ -164,6 +161,19 @@ public class SaveDataHandler : MonoBehaviour
 
 
         return list;
+    }
+
+
+    public void SaveInstance()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        this.instanceSaveData = new SaveData();
     }
 
 
