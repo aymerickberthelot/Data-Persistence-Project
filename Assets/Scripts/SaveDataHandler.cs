@@ -8,7 +8,7 @@ using UnityEditor;
 using System;
 public class SaveDataHandler : MonoBehaviour
 {
-    public static SaveDataHandler Instance;
+    public static SaveDataHandler Instance {get; private set;}
     private InputField txt_Input;
     string userName;
     private bool changeBestScore = false;
@@ -16,18 +16,34 @@ public class SaveDataHandler : MonoBehaviour
 
     public SaveData instanceSaveData;
 
-    public string name_file = "name.json";
-    public string data_file = "data.json";
+    private string b_Name_file;
+    private string b_Data_file;
 
 
+    public string Name_file 
+    {
+        get
+        {
+            b_Name_file = "name.json";
+            return b_Name_file;
+        }
+        
+    }
+
+    public string Data_file 
+    {
+        get
+        {
+            b_Data_file = "data.json";
+            return b_Data_file;
+        }
+    }
 
 
     private void Awake()
     {
-
         SaveInstance();
         DontDestroyOnLoad(gameObject);
-
     }
 
 
@@ -97,14 +113,14 @@ public class SaveDataHandler : MonoBehaviour
 
 
         string json = JsonUtility.ToJson(data);
-        File.WriteAllText(Application.persistentDataPath + "/" + name_file, json);
+        File.WriteAllText(Application.persistentDataPath + "/" + Name_file, json);
 
         return 1;
     }
 
     public string LoadName()
     {
-        string path = Application.persistentDataPath + "/" + name_file;
+        string path = Application.persistentDataPath + "/" + Name_file;
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
@@ -134,7 +150,7 @@ public class SaveDataHandler : MonoBehaviour
         {
             string json = JsonUtility.ToJson(data);
             Debug.Log(json);
-            File.WriteAllText(Application.persistentDataPath + "/" + data_file, json);
+            File.WriteAllText(Application.persistentDataPath + "/" + Data_file, json);
         }
 
         data.currentScore = 0;
@@ -144,7 +160,7 @@ public class SaveDataHandler : MonoBehaviour
     public ArrayList LoadUserInfo()
     {
         ArrayList list = new ArrayList();
-        string path = Application.persistentDataPath + "/" + data_file;
+        string path = Application.persistentDataPath + "/" + Data_file;
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);

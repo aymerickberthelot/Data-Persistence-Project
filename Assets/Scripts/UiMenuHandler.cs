@@ -13,22 +13,13 @@ public class UIMenuHandler : UIHandler
 
     public void Start()
     {
-
-
         inputField = GameObject.Find("NameInput").GetComponent<InputField>();
         bestScoreInfoText = GameObject.Find("BestScoreInfoText").GetComponent<Text>();
         userName_input = SaveDataHandler.Instance.LoadName();
 
-
-
         GetAllInfo();
         DisplayBestScoreInfo(bestScoreInfoText, highestScore);
         DisplayUserNameOnInputField();
-    }
-
-    public void Update()
-    {
-
     }
 
     public void StartGame()
